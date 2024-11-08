@@ -36,15 +36,18 @@ jobs:
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "Version found: $VERSION"
 
-    - name: Create Release Draft
-      uses: peter-evans/create-release@v1
-      with:
-        tag_name: ${{ env.VERSION }}  # 使用从 pom.xml 中获取的版本号作为 tag
-        release_name: ${{ env.VERSION }}  # 使用从 pom.xml 中获取的版本号作为 Release 标题
-        draft: true  # 将 Release 设置为草稿
-        prerelease: false  # 设置为正式发布版本
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GITHUB_TOKEN 进行 API 操作
+    - name: Create Release Draft via GitHub API
+      run: |
+        curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -d '{
+                "tag_name": "${{ env.VERSION }}",
+                "target_commitish": "main",
+                "name": "${{ env.VERSION }}",
+                "body": "Release ${ { env.VERSION }}",
+                "draft": true,
+                "prerelease": false
+              }' \
+          https://api.github.com/repos/${{ github.repository }}/releases
 
     - name: Upload JAR to Release
       uses: softprops/action-gh-release@v1
