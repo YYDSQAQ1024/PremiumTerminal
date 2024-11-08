@@ -1,7 +1,4 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
-
-name: Maven Package
+name: Build and Upload JAR to Release
 
 on:
   release:
@@ -10,6 +7,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read  # 允许读取仓库内容
+      packages: write  # 允许写入包
+      id-token: write  # 允许获取身份令牌（这对于 GitHub API 访问权限有帮助）
+      actions: write  # 允许写入 actions
+      issues: write
 
     steps:
     - name: Checkout code
