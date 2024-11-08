@@ -13,7 +13,7 @@ jobs:
       packages: write  # 允许写入包
       id-token: write  # 允许获取身份令牌（这对于 GitHub API 访问权限有帮助）
       actions: write  # 允许写入 actions
-      issues: write  # 可选：如果需要更高权限来操作 release 资源
+      issues: write
 
     steps:
     - name: Checkout code
