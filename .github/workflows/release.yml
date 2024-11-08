@@ -28,9 +28,27 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    - name: Upload specific JAR to Release
-      uses: softprops/action-gh-release@v0.1.6
+    - name: Get version from pom.xml
+      id: get_version
+      run: |
+        # 使用 Maven 解析 pom.xml 中的版本号
+        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "Version found: $VERSION"
+
+    - name: Create Release Draft
+      uses: peter-evans/create-release@v1
       with:
-        files: target/PremiumTerminal-*.jar  # 仅上传符合特定格式的 JAR 文件
+        tag_name: ${{ env.VERSION }}  # 使用从 pom.xml 中获取的版本号作为 tag
+        release_name: ${{ env.VERSION }}  # 使用从 pom.xml 中获取的版本号作为 Release 标题
+        draft: true  # 将 Release 设置为草稿
+        prerelease: false  # 设置为正式发布版本
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动生成的访问令牌
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GITHUB_TOKEN 进行 API 操作
+
+    - name: Upload JAR to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: target/PremiumTerminal-*.jar  # 上传构建好的 JAR 文件
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GITHUB_TOKEN 进行 API 操作
