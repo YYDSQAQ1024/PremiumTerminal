@@ -60,7 +60,13 @@
           <url>https://oss.sonatype.org/content/groups/public/</url>
       </repository>
   </repositories>
-
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/YYDSQAQ1024/PremiumTerminal</url>
+        </repository>
+    </distributionManagement>
   <dependencies>
       <!--log4j-->
       <dependency>
