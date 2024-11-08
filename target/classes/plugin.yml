@@ -1,0 +1,14 @@
+name: PremiumTerminal
+version: '1.0-SNAPSHOT'
+main: me.wang.premiumterminal.PremiumTerminal
+api-version: '1.16'
+softdepend: [PlaceholderAPI]
+authors: [lao_wang]
+description: 一款无需公网就可以远程访问的MC网页终端
+
+commands:
+  premiumterminal:
+    description: 插件主指令
+    aliases:
+      - 'terminal'
+      - 'pt'
