@@ -1,4 +1,4 @@
-name: Build and Upload JAR to Release
+name: Release
 
 on:
   release:
@@ -8,12 +8,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read  # 允许读取仓库内容
-      packages: write  # 允许写入包
-      id-token: write  # 允许获取身份令牌（这对于 GitHub API 访问权限有帮助）
-      actions: write  # 允许写入 actions
-      issues: write
 
     steps:
     - name: Checkout code
@@ -28,9 +22,3 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    - name: Upload specific JAR to Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: target/PremiumTerminal-*.jar  # 仅上传符合特定格式的 JAR 文件
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动生成的访问令牌
