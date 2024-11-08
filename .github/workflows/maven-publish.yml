@@ -14,6 +14,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write  # GitHub Package 发布所需权限
 
     steps:
     - uses: actions/checkout@v4
@@ -29,6 +30,6 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn deploy -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/YYDSQAQ1024/PremiumTerminal
       env:
         GITHUB_TOKEN: ${{ github.token }}
