@@ -2,7 +2,7 @@ name: Build and Upload JAR to Release
 
 on:
   release:
-    types: [published]  # 当用户发布新 Release 时触发
+    types: [created]
 
 jobs:
   build:
