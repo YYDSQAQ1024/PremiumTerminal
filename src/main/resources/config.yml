@@ -1,4 +1,11 @@
-
+file:
+  path: '/'
+  permissions:
+    delete: true
+    rename: true
+    upload: true
+    read-file: true
+    create: true
 
 
 #WARNING
