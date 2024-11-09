@@ -4,7 +4,7 @@
   <groupId>me.wang</groupId>
   <artifactId>PremiumTerminal</artifactId>
   <name>PremiumTerminal</name>
-  <version>1.0.0</version>
+  <version>1.0-SNAPSHOT</version>
   <description>一款无需公网就可以远程访问的MC网页终端</description>
   <build>
     <resources>
@@ -54,13 +54,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/YYDSQAQ1024/PremiumTerminal</url>
-    </repository>
-  </distributionManagement>
   <properties>
     <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

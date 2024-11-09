@@ -1,5 +1,5 @@
 name: PremiumTerminal
-version: '1.0.0'
+version: '1.0-SNAPSHOT'
 main: me.wang.premiumterminal.PremiumTerminal
 api-version: '1.16'
 softdepend: [PlaceholderAPI]
