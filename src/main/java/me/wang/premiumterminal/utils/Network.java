@@ -275,6 +275,7 @@ public class Network {
                     e.printStackTrace();
                     return;
                 }
+
                 String fileContent = content.toString();
                 writer.write(("[CONTENT]"+fileContent).getBytes(StandardCharsets.UTF_8));
                 writer.flush();
