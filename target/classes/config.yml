@@ -1,4 +1,19 @@
+connection:
+  timeout: 10000
+
+file:
+  path: ''
+  permissions:
+    delete: true
+    rename: true
+    upload: true
+    read-file: true
+    create: true
+    hide-files:
+      - 'hide'
+
+
+#WARNING
+#do not touch it!
 uuid: ''
-
 password: ''
-

@@ -16,6 +16,8 @@ import java.lang.management.MemoryMXBean;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static me.wang.premiumterminal.PremiumTerminal.logFile;
@@ -83,6 +85,8 @@ public class Network {
                 try {
                     Bukkit.getLogger().info(ChatColor.GREEN+"正在与服务器建立连接...");
                     socket = new Socket(serverHost, serverPort);
+                    socket.setSendBufferSize(64 * 1024 * 1024);
+                    socket.setReceiveBufferSize(64 * 1024 * 1024);
                     int timeout = socket.getSoTimeout();
                     socket.setSoTimeout(plugin.getConfig().getInt("connection.timeout"));
                     reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
@@ -278,6 +282,23 @@ public class Network {
 
                 String fileContent = content.toString();
                 writer.write(("[CONTENT]"+fileContent).getBytes(StandardCharsets.UTF_8));
+                writer.flush();
+            }else if (msg.startsWith("[SAVE]")){
+                String raw = msg.replace("[SAVE]", "").trim();
+
+                String[] s = raw.split("\\[CONTENT]",2);
+                String p = s[0];
+                String content = s[1];
+                content = content.replace("\\n","\n").replace("\\r\\n", "\r\n");
+                File file = new File(p);
+                if (!file.exists()){
+                    writer.write(("[ERROR]file not found").getBytes(StandardCharsets.UTF_8));
+                    writer.flush();
+                    return;
+                }
+                Path path = Paths.get(p);
+                Files.write(path, content.getBytes(StandardCharsets.UTF_8));
+                writer.write(("[INFO]file save success").getBytes(StandardCharsets.UTF_8));
                 writer.flush();
             }
         } catch (IOException e) {
