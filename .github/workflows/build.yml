@@ -2,7 +2,8 @@ name: Build and Upload JAR
 
 on:
   push:
-    branches: [ "master" ]
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -24,5 +25,5 @@ jobs:
     - name: Upload JAR as Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: premium-terminal-jar  # Artifact 名称，可以自定义
+        name: premium-terminal  # Artifact 名称，可以自定义
         path: target/*.jar  # 构建的 JAR 文件路径，根据 Maven 构建路径修改
