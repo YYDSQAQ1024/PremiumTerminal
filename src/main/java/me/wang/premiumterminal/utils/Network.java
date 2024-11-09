@@ -15,6 +15,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
 import static me.wang.premiumterminal.PremiumTerminal.logFile;
@@ -82,6 +83,8 @@ public class Network {
                 try {
                     Bukkit.getLogger().info(ChatColor.GREEN+"正在与服务器建立连接...");
                     socket = new Socket(serverHost, serverPort);
+                    int timeout = socket.getSoTimeout();
+                    socket.setSoTimeout(plugin.getConfig().getInt("connection.timeout"));
                     reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
                     writer = socket.getOutputStream();
                     Bukkit.getLogger().info(ChatColor.AQUA+"已成功与服务器建立连接！");
@@ -94,7 +97,7 @@ public class Network {
                         sendid = false;
                     }
 
-
+                    socket.setSoTimeout(timeout);
 
                     // 读取服务器的消息，保持连接
                     String message;
@@ -121,9 +124,8 @@ public class Network {
                         writeLog("stop,code 1");
                     }
                 } finally {
-                    Bukkit.getLogger().warning("正在终止连接(Async)");
+                    Bukkit.getLogger().warning("连接终止,正在重连...");
                     stop(true);
-
                 }
             }
         }.runTaskAsynchronously(plugin);
@@ -165,8 +167,8 @@ public class Network {
                 plugin.getServer().shutdown();
             } else if (msg.startsWith("[SELECT]files")){
                 String path = msg.replace("[SELECT]files", "").trim();
-                //Bukkit.getLogger().info("获取"+path+"的文件列表");
-                File file = new File(path);
+                String head = plugin.getConfig().getString("file.path");
+                File file = new File(head+path);
                 File[] files = file.listFiles();
                 List<Map<String,String>> list = new ArrayList<>();
 
@@ -231,6 +233,52 @@ public class Network {
                 String s = gson.toJson(map);
                 writer.write(("[SYSTEM]"+ s).getBytes(StandardCharsets.UTF_8));
                 writer.flush();
+            } else if (msg.startsWith("[DELETE]file")) {
+                String path = msg.replace("[DELETE]file", "").trim();
+                File file = new File(path);
+                if (!file.exists()){
+                    writer.write(("[ERROR]file not found").getBytes(StandardCharsets.UTF_8));
+                    writer.flush();
+                    return;
+                }
+                if (file.delete()){
+                    writer.write(("[INFO]file delete success").getBytes(StandardCharsets.UTF_8));
+                    writer.flush();
+                }else {
+                    writer.write(("[INFO]file delete fail").getBytes(StandardCharsets.UTF_8));
+                    writer.flush();
+                }
+            } else if (msg.startsWith("[VIEW]")){
+                String path = msg.replace("[VIEW]", "").trim();
+                File file = new File(path);
+                if (!file.exists()){
+                    writer.write(("[ERROR]file not found").getBytes(StandardCharsets.UTF_8));
+                    writer.flush();
+                    return;
+                }
+                StringBuilder content = new StringBuilder();
+                final int MAX_SIZE = 1_048_567;
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (content.length() + line.length() > MAX_SIZE) {
+                            writer.write(("[ERROR]file too big").getBytes(StandardCharsets.UTF_8));
+                            writer.flush();
+                            return;
+                        }
+                        content.append(line).append("\n"); // 追加每一行并换行
+                    }
+                } catch (IOException e) {
+                    writer.write(("[ERROR]file read error").getBytes(StandardCharsets.UTF_8));
+                    writer.flush();
+                    e.printStackTrace();
+                    return;
+                }
+
+                String fileContent = content.toString();
+                writer.write(("[CONTENT]"+fileContent).getBytes(StandardCharsets.UTF_8));
+                writer.flush();
             }
         } catch (IOException e) {
             writeLog("error at get msg");
@@ -264,6 +312,8 @@ public class Network {
             }
         } catch (IOException e) {
             Bukkit.getLogger().severe("在与服务器终止连接时发生错误: " + e.getMessage());
+            Bukkit.getLogger().info("正在重连...");
+            stop(true);
         }
     }
 

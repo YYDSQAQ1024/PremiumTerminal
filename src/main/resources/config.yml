@@ -1,5 +1,8 @@
+connection:
+  timeout: 10000
+
 file:
-  path: '/'
+  path: ''
   permissions:
     delete: true
     rename: true
