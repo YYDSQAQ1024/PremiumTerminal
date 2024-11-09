@@ -3,7 +3,6 @@ name: Build and Upload JAR
 on:
   push:
     tags:
-      - 'v*'
       - 'build*'
 
 jobs:
