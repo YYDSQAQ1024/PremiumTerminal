@@ -6,6 +6,8 @@ file:
     upload: true
     read-file: true
     create: true
+    hide-files:
+      - 'hide'
 
 
 #WARNING
