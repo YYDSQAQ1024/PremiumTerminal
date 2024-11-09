@@ -35,4 +35,4 @@ jobs:
       with:
         files: target/PremiumTerminal-*.jar  # 上传构建好的 JAR 文件
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GITHUB_TOKEN 进行 API 操作
+        GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}  # 使用 GITHUB_TOKEN 进行 API 操作
